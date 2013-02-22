@@ -11,3 +11,5 @@ Design Considerations:
 - Robustness. I will also be using it as a cnc machine to mill wood and metal so it needed to be very strong.
 
 It uses [Open Rail](http://www.kickstarter.com/projects/openrail/openrail-open-source-linear-bearing-system) for the Y axis linear bearings, which allows the gantry system to carry more weight than smooth rods would allow. For the X axis linear bearings it uses two 10mm smooth rods, this lets the print head (or any other tool I can fit in there) sit centered between them and get as close to the outside as possible. The Z axis uses low friction PTFE (teflon) slides for strength and low cost, they will ride in grooves cut the square tubing.
+
+![Early Rendering]()
