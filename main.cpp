@@ -288,13 +288,13 @@ void mouseDrag(int x, int y) {
 		double right[3];
 		rightVector(right);
 //		printf("<%f, %f, %f>\n", right[0], right[1], right[2]);
+//		printf("eye (%f, %f, %f)\n", EYE[0], EYE[1], EYE[2]);
+//		printf(" at (%f, %f, %f)\n", AT[0], AT[1], AT[2]);
 		double lx = dX - x;
 		double ly = dY - y;
 		for (int i=0; i<3; i++) {
 			AT[i] += lx * right[i];
 			AT[i] += ly * UP[i];
-			EYE[i] += lx * right[i];
-			EYE[i] += ly * UP[i];
 		}
 		dX=x;
 		dY=y;
@@ -365,7 +365,7 @@ void MoveCamera() {
 		gNear = 0.01;
 	
 	// Set camera position
-	SpherePoint(dist, gUpAngle, gPanAngle, EYE);
+	SpherePoint(dist, gUpAngle, gPanAngle, AT, EYE);
 	
 	// Set up position
 	double right[3], forward[3];

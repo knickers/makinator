@@ -66,6 +66,14 @@ void SpherePoint(double radius, double upAngle, double panAngle, double point_ou
 	point_out[2] = radius*sin(upAngle);
 }
 // Fine a point on a sphere given the up and pan angles
+void SpherePoint(double radius, double upAngle, double panAngle, double orig[3], double point_out[3])
+{
+	double temp  = radius*cos(upAngle);
+	point_out[0] = orig[0] + temp*cos(panAngle);
+	point_out[1] = orig[1] + temp*sin(panAngle);
+	point_out[2] = orig[2] + radius*sin(upAngle);
+}
+// Fine a point on a sphere given the up and pan angles
 void SpherePoint(double radius, double upAngle, double panAngle, point3 &point_out)
 {
 	double temp = radius*cos(upAngle);
