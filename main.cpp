@@ -41,7 +41,8 @@ double gNear      = 100;   // Near cutpff plane
 double gFar       = 500;   // Far cutoff plane
 double dX         = 0;     // Delta X for mouse panning
 double dY         = 0;     // Delta Y for mouse panning
-bool   gGrabbed   = false; // If scene is grabbed by mouse
+bool   gGrabbedLeft  = false; // If scene is grabbed by left mouse button
+bool   gGrabbedRight = false; // If scene is grabbed by right mouse button
 verticalSlider gZoomSlider(0,0,10,100);
 // 3d Printer
 Printer gPrinter;
@@ -245,14 +246,21 @@ void specialKeys(int key, int x, int y) {
 void mouseClick(int mouse_button, int state, int x, int y) {
 	y = gY - y;
 	if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		if(!gZoomSlider.Click(x, y)) {
-			dX=x;
-			dY=y;
-			gGrabbed = true;
+		if(!gGrabbedRight) {
+			dX = x;
+			dY = y;
+			gGrabbedLeft = true;
 		}
-	}
-	if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-		gGrabbed = false;
+	} else if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+		gGrabbedLeft = false;
+	} else if (mouse_button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+		if(!gGrabbedLeft) {
+			dX = x;
+			dY = y;
+			gGrabbedRight = true;
+		}
+	} else if (mouse_button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
+		gGrabbedRight = false;
 	}
 	MoveCamera();
 	glutPostRedisplay();
@@ -262,20 +270,31 @@ void mouseClick(int mouse_button, int state, int x, int y) {
 // system whenever any mouse button is drug.
 void mouseDrag(int x, int y) {
 	y = gY - y;
-	if(!gZoomSlider.Drag(x, y) && gGrabbed) {
-		if(gUpAngle > PI/2 && gUpAngle < 3*PI/2)
+	if(gGrabbedLeft) {
+		if (gUpAngle > PI/2 && gUpAngle < 3*PI/2) {
 			gPanAngle += (x-dX)*gDist/10000;
-		else
+		} else {
 			gPanAngle -= (x-dX)*gDist/10000;
+		}
 		gUpAngle  -= (y-dY)*gDist/10000;
-		if(gUpAngle > 2*PI)
-			gUpAngle -= 2*PI;
-		if(gUpAngle < 0)
-			gUpAngle += 2*PI;
-		if(gPanAngle > 2*PI)
-			gPanAngle -= 2*PI;
-		if(gPanAngle < 0)
-			gPanAngle += 2*PI;
+		if (gUpAngle > 2*PI)  gUpAngle -= 2*PI;
+		if (gUpAngle < 0)     gUpAngle += 2*PI;
+		if (gPanAngle > 2*PI) gPanAngle -= 2*PI;
+		if (gPanAngle < 0)    gPanAngle += 2*PI;
+		dX=x;
+		dY=y;
+	} else if (gGrabbedRight) {
+		double right[3];
+		rightVector(right);
+//		printf("<%f, %f, %f>\n", right[0], right[1], right[2]);
+		double lx = dX - x;
+		double ly = dY - y;
+		for (int i=0; i<3; i++) {
+			AT[i] += lx * right[i];
+			AT[i] += ly * UP[i];
+			EYE[i] += lx * right[i];
+			EYE[i] += ly * UP[i];
+		}
 		dX=x;
 		dY=y;
 	}
