@@ -62,6 +62,7 @@ void InitializeMyStuff();
 //void SaveAnim(int frames);
 void animationFrame(unsigned ms);
 void MoveCamera();
+void rightVector(double v[]);
 void text_output(double x, double y, const char *string);
 void stroke_text(double x, double y, int scale, int rotate, string string);
 void number_output(double x, double y, double num);
@@ -344,14 +345,23 @@ void MoveCamera() {
 		gNear = 0.01;
 	
 	// Set camera position
-	SpherePoint(dist,gUpAngle,gPanAngle,EYE);
+	SpherePoint(dist, gUpAngle, gPanAngle, EYE);
+	
 	// Set up position
-	double v1[3],v2[3];
-	v1[0]=cos(gPanAngle+PI/2);v1[1]=sin(gPanAngle+PI/2);v1[2]=0;//right
-	v2[0]=AT[0]-EYE[0];v2[1]=AT[1]-EYE[1];v2[2]=AT[2]-EYE[2];//forward
-	CrossProduct(v1,v2,UP);
+	double right[3], forward[3];
+	rightVector(right);
+	forward[0] = AT[0] - EYE[0];
+	forward[1] = AT[1] - EYE[1];
+	forward[2] = AT[2] - EYE[2];
+	CrossProduct(right, forward, UP);
 	for(int i=0; i<3; i++)
-		UP[i] = UP[i]/dist;
+		UP[i] /= dist;
+}
+
+void rightVector(double v[]) {
+	v[0] = cos(gPanAngle + PI/2);
+	v[1] = sin(gPanAngle + PI/2);
+	v[2] = 0;
 }
 
 // Outputs a string of text at the specified location.
