@@ -82,11 +82,12 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(10, 10);
 	
 	bool fullscreen = 0;
-	if(fullscreen) {
+	if (fullscreen) {
 		glutGameModeString("1280x800:32");
 		glutEnterGameMode();
-	} else
+	} else {
 		glutCreateWindow("3D Printer"); // Title of the window
+	}
 	
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
@@ -213,8 +214,8 @@ void keyboard(unsigned char c, int x, int y) {
 			break;
 		case 13: // enter
 			break;
-		default:
-			break;
+		default:   // Break instead of return because we still want the camera
+			break; // updated when the number keys are pressed
 	}
 	MoveCamera();
 	glutPostRedisplay();
