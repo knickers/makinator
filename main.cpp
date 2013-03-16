@@ -334,12 +334,15 @@ void animationFrame(unsigned int ms) {
 }
 
 void MoveCamera() {
+	double prntr = gPrinter.GetSize();
+	double table = prntr > 750 ? prntr : 750;
 	// Set near and far planes
 	double dist = (1-gZoomSlider.GetValue()) * 75 * gDist + 2;
-	gFar  = dist+gPrinter.GetSize()*1.75;
-	gNear = dist-gPrinter.GetSize()*2;
-	if(gNear <= 0)
-		gNear = 0.1;
+	gFar  = dist + table;
+	gNear = dist - table;
+	if (gNear <= 0)
+		gNear = 0.01;
+	
 	// Set camera position
 	SpherePoint(dist,gUpAngle,gPanAngle,EYE);
 	// Set up position

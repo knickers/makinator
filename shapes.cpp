@@ -1152,8 +1152,9 @@ void DrawTable(double x, double y, double z) {
 	double ax = x/10;
 	double ay = y/10;
 	double az = z/10;
+	// Top
 	glTranslated(0, 0, z-az);
-		DrawSolidBox(x, y, az); // top
+		DrawSolidBox(x, y, az);
 	glTranslated(0, 0, -z+az);
 	// Legs
 	glPushMatrix();
@@ -1166,4 +1167,10 @@ void DrawTable(double x, double y, double z) {
 			glTranslated(x-ax, 0, 0);
 		DrawSolidBox(ax, ay, z-az); // q1
 	glPopMatrix();
+	// Cup
+	float silver[] = { .7, .8, .8,  1};
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, silver);
+	glTranslated(ax*4, -ay*2, z);
+		DrawTaperCylinder(155, 30, 43, 10, 0);
+	glTranslated(-ax*4, ay*2, -z);
 }
