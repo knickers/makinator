@@ -11,6 +11,7 @@ struct point3 {double x,y,z;};
 void FindTriangleNormal(double x[], double y[], double z[], double n[]);
 point3 FindTriangleNormal(point3 cp, point3 p1, point3 p2);
 void SpherePoint(double radius, double upAngle, double panAngle, double point_out[3]);
+void SpherePoint(double radius, double upAngle, double panAngle, double orig[3], double point_out[3]);
 void SpherePoint(double radius, double upAngle, double panAngle, point3 &point_out);
 // Vector Math
 void CrossProduct(double v1[],double v2[],double r[]);

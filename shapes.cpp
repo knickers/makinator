@@ -66,6 +66,14 @@ void SpherePoint(double radius, double upAngle, double panAngle, double point_ou
 	point_out[2] = radius*sin(upAngle);
 }
 // Fine a point on a sphere given the up and pan angles
+void SpherePoint(double radius, double upAngle, double panAngle, double orig[3], double point_out[3])
+{
+	double temp  = radius*cos(upAngle);
+	point_out[0] = orig[0] + temp*cos(panAngle);
+	point_out[1] = orig[1] + temp*sin(panAngle);
+	point_out[2] = orig[2] + radius*sin(upAngle);
+}
+// Fine a point on a sphere given the up and pan angles
 void SpherePoint(double radius, double upAngle, double panAngle, point3 &point_out)
 {
 	double temp = radius*cos(upAngle);
@@ -1152,8 +1160,9 @@ void DrawTable(double x, double y, double z) {
 	double ax = x/10;
 	double ay = y/10;
 	double az = z/10;
+	// Top
 	glTranslated(0, 0, z-az);
-		DrawSolidBox(x, y, az); // top
+		DrawSolidBox(x, y, az);
 	glTranslated(0, 0, -z+az);
 	// Legs
 	glPushMatrix();
@@ -1166,4 +1175,10 @@ void DrawTable(double x, double y, double z) {
 			glTranslated(x-ax, 0, 0);
 		DrawSolidBox(ax, ay, z-az); // q1
 	glPopMatrix();
+	// Cup
+	float silver[] = { .7, .8, .8,  1};
+	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, silver);
+	glTranslated(ax*4, -ay*2, z);
+		DrawTaperCylinder(155, 30, 43, 10, 0);
+	glTranslated(-ax*4, ay*2, -z);
 }

@@ -41,7 +41,8 @@ double gNear      = 100;   // Near cutpff plane
 double gFar       = 500;   // Far cutoff plane
 double dX         = 0;     // Delta X for mouse panning
 double dY         = 0;     // Delta Y for mouse panning
-bool   gGrabbed   = false; // If scene is grabbed by mouse
+bool   gGrabbedLeft  = false; // If scene is grabbed by left mouse button
+bool   gGrabbedRight = false; // If scene is grabbed by right mouse button
 verticalSlider gZoomSlider(0,0,10,100);
 // 3d Printer
 Printer gPrinter;
@@ -62,6 +63,7 @@ void InitializeMyStuff();
 //void SaveAnim(int frames);
 void animationFrame(unsigned ms);
 void MoveCamera();
+void rightVector(double v[]);
 void text_output(double x, double y, const char *string);
 void stroke_text(double x, double y, int scale, int rotate, string string);
 void number_output(double x, double y, double num);
@@ -80,11 +82,12 @@ int main(int argc, char **argv) {
 	glutInitWindowPosition(10, 10);
 	
 	bool fullscreen = 0;
-	if(fullscreen) {
+	if (fullscreen) {
 		glutGameModeString("1280x800:32");
 		glutEnterGameMode();
-	} else
+	} else {
 		glutCreateWindow("3D Printer"); // Title of the window
+	}
 	
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
@@ -211,8 +214,8 @@ void keyboard(unsigned char c, int x, int y) {
 			break;
 		case 13: // enter
 			break;
-		default:
-			break;
+		default:   // Break instead of return because we still want the camera
+			break; // updated when the number keys are pressed
 	}
 	MoveCamera();
 	glutPostRedisplay();
@@ -244,14 +247,21 @@ void specialKeys(int key, int x, int y) {
 void mouseClick(int mouse_button, int state, int x, int y) {
 	y = gY - y;
 	if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-		if(!gZoomSlider.Click(x, y)) {
-			dX=x;
-			dY=y;
-			gGrabbed = true;
+		if(!gGrabbedRight) {
+			dX = x;
+			dY = y;
+			gGrabbedLeft = true;
 		}
-	}
-	if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-		gGrabbed = false;
+	} else if (mouse_button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+		gGrabbedLeft = false;
+	} else if (mouse_button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+		if(!gGrabbedLeft) {
+			dX = x;
+			dY = y;
+			gGrabbedRight = true;
+		}
+	} else if (mouse_button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
+		gGrabbedRight = false;
 	}
 	MoveCamera();
 	glutPostRedisplay();
@@ -261,20 +271,31 @@ void mouseClick(int mouse_button, int state, int x, int y) {
 // system whenever any mouse button is drug.
 void mouseDrag(int x, int y) {
 	y = gY - y;
-	if(!gZoomSlider.Drag(x, y) && gGrabbed) {
-		if(gUpAngle > PI/2 && gUpAngle < 3*PI/2)
+	if(gGrabbedLeft) {
+		if (gUpAngle > PI/2 && gUpAngle < 3*PI/2) {
 			gPanAngle += (x-dX)*gDist/10000;
-		else
+		} else {
 			gPanAngle -= (x-dX)*gDist/10000;
+		}
 		gUpAngle  -= (y-dY)*gDist/10000;
-		if(gUpAngle > 2*PI)
-			gUpAngle -= 2*PI;
-		if(gUpAngle < 0)
-			gUpAngle += 2*PI;
-		if(gPanAngle > 2*PI)
-			gPanAngle -= 2*PI;
-		if(gPanAngle < 0)
-			gPanAngle += 2*PI;
+		if (gUpAngle > 2*PI)  gUpAngle -= 2*PI;
+		if (gUpAngle < 0)     gUpAngle += 2*PI;
+		if (gPanAngle > 2*PI) gPanAngle -= 2*PI;
+		if (gPanAngle < 0)    gPanAngle += 2*PI;
+		dX=x;
+		dY=y;
+	} else if (gGrabbedRight) {
+		double right[3];
+		rightVector(right);
+//		printf("<%f, %f, %f>\n", right[0], right[1], right[2]);
+//		printf("eye (%f, %f, %f)\n", EYE[0], EYE[1], EYE[2]);
+//		printf(" at (%f, %f, %f)\n", AT[0], AT[1], AT[2]);
+		double lx = dX - x;
+		double ly = dY - y;
+		for (int i=0; i<3; i++) {
+			AT[i] += lx * right[i];
+			AT[i] += ly * UP[i];
+		}
 		dX=x;
 		dY=y;
 	}
@@ -334,21 +355,33 @@ void animationFrame(unsigned int ms) {
 }
 
 void MoveCamera() {
+	double prntr = gPrinter.GetSize();
+	double table = prntr > 750 ? prntr : 750;
 	// Set near and far planes
 	double dist = (1-gZoomSlider.GetValue()) * 75 * gDist + 2;
-	gFar  = dist+gPrinter.GetSize()*1.75;
-	gNear = dist-gPrinter.GetSize()*2;
-	if(gNear <= 0)
-		gNear = 0.1;
+	gFar  = dist + table;
+	gNear = dist - table;
+	if (gNear <= 0)
+		gNear = 0.01;
+	
 	// Set camera position
-	SpherePoint(dist,gUpAngle,gPanAngle,EYE);
+	SpherePoint(dist, gUpAngle, gPanAngle, AT, EYE);
+	
 	// Set up position
-	double v1[3],v2[3];
-	v1[0]=cos(gPanAngle+PI/2);v1[1]=sin(gPanAngle+PI/2);v1[2]=0;//right
-	v2[0]=AT[0]-EYE[0];v2[1]=AT[1]-EYE[1];v2[2]=AT[2]-EYE[2];//forward
-	CrossProduct(v1,v2,UP);
+	double right[3], forward[3];
+	rightVector(right);
+	forward[0] = AT[0] - EYE[0];
+	forward[1] = AT[1] - EYE[1];
+	forward[2] = AT[2] - EYE[2];
+	CrossProduct(right, forward, UP);
 	for(int i=0; i<3; i++)
-		UP[i] = UP[i]/dist;
+		UP[i] /= dist;
+}
+
+void rightVector(double v[]) {
+	v[0] = cos(gPanAngle + PI/2);
+	v[1] = sin(gPanAngle + PI/2);
+	v[2] = 0;
 }
 
 // Outputs a string of text at the specified location.
