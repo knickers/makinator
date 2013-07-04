@@ -1179,6 +1179,6 @@ void DrawTable(double x, double y, double z) {
 	float silver[] = { .7, .8, .8,  1};
 	glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, silver);
 	glTranslated(ax*4, -ay*2, z);
-		DrawTaperCylinder(155, 30, 43, 10, 0);
+		DrawTaperCylinder(155, 30, 43, 20, 0);
 	glTranslated(-ax*4, ay*2, -z);
 }

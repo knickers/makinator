@@ -185,8 +185,11 @@ void keyboard(unsigned char c, int x, int y) {
 		case '%': // 5, Makinator v2
 			gPrinter.SetType(5);
 			break;
-		case '^': // 6, Ordbot
+		case '^': // 6, Makinator Mini
 			gPrinter.SetType(6);
+			break;
+		case '&': // 7, Ordbot
+			gPrinter.SetType(7);
 			break;
 		case '0': // 0, 1000mm(40in) printer
 			gPrinter.SetSize(1000);

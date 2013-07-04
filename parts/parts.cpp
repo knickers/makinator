@@ -1,3 +1,35 @@
+// inch values
+double ONE = 25;
+double HLF = ONE/2;
+double TWO = 2 * ONE;
+double TRE = 3 * ONE;
+double FOR = 4 * ONE;
+
+// Draw three wheels, one centered below the other two
+void v_wheels(double width, double height) {
+	glPushMatrix();
+		glRotated(-90, 0,1,0);
+			glTranslated(0, 0, -4);
+				DrawSolidCylinder(8, 12, 16, 0); // Lower
+				glTranslated(height, -width/2, 0);
+					DrawSolidCylinder(8, 12, 16, 0); // Near
+					glTranslated(0, width, 0);
+						DrawSolidCylinder(8, 12, 16, 0); // Far
+	glPopMatrix();
+}
+
+void DrawSeperatedBars(double x, double y, double z, double d, int axis, void (*box)(double, double, double)) {
+	double dX = axis == 0 ? d : 0;
+	double dY = axis == 1 ? d : 0;
+	double dZ = axis == 2 ? d : 0;
+	glPushMatrix();
+		glTranslated(-dX/2, -dY/2, -dZ/2);
+			box(x, y, z);
+//			glTranslated(dX, dY, dZ);
+//				box(x, y, z);
+	glPopMatrix();
+}
+
 void DrawPulley(double h, double r) {
 	glPushMatrix();
 		glTranslated(0,0,-h/2-2);

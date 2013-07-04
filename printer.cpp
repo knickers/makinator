@@ -9,11 +9,12 @@ using namespace std;
 #include "parts/makinator-v0.cpp"
 #include "parts/makinator-v1.cpp"
 #include "parts/makinator-v2.cpp"
+#include "parts/makinator-mini.cpp"
 #include "parts/ordbot.cpp"
 
 Printer::Printer() {
 	mR = 4; // Pipe radius in millimeters
-	mType = 5;
+	mType = 6;
 	mSize = 100; // Print Area Cube in millimeters
 	mPause = 0;
 	Set(0, 0, 0);
@@ -22,14 +23,18 @@ Printer::Printer() {
 	mTitles[2] = "Makinator v0";
 	mTitles[3] = "Makinator v1";
 	mTitles[4] = "Makinator v2";
-	mTitles[5] = "Ord Bot";
+	mTitles[5] = "Makinator Mini";
+	mTitles[6] = "Ord Bot";
+	
 	mOption[0] = mOption[1] = mOption[2] = false;
+	
 	mOptions[0] = "- none -";
 	mOptions[1] = "- none -";
 	mOptions[2] = "a) Toggle Table b) Toggle Leg Width";
 	mOptions[3] = "a) Toggle Table b) Toggle Transparency c) Toggle Direction";
 	mOptions[4] = "a) Toggle Table b) Toggle Transparency";
-	mOptions[5] = "- none -";
+	mOptions[5] = "a) Toggle Table b) Toggle Transparency";
+	mOptions[6] = "- none -";
 }
 
 Printer::~Printer() {
@@ -116,7 +121,10 @@ void Printer::Draw() {
 	case 5: // Makinator v2
 		DrawMakinatorV2(mSize, mX, mY, mZ, mOption[1]);
 		break;
-	case 6: // Ord Bot
+	case 6: // Makinator Mini
+		DrawMakinatorMini(mSize, mX, mY, mZ, mOption[1]);
+		break;
+	case 7: // Ord Bot
 		DrawOrdBot(mSize, mX, mY, mZ);
 		break;
 	dafault:
@@ -166,7 +174,7 @@ void Printer::SetZ(double z) {
 }
 
 void Printer::SetType(unsigned type) {
-	if (type < 7) {
+	if (type < 8) {
 		mType = type;
 		mOption[0] = mOption[1] = false;
 	}

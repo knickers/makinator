@@ -17,7 +17,7 @@ private:
 	double mSize, mArea, mX, mY, mZ, mR;
 	unsigned mType;
 	bool mOption[3];
-	string mOptions[6],  mTitles[6];
+	string mOptions[7],  mTitles[7];
 	
 	void DrawCrossMount();
 	double zeroToOne(double n);
