@@ -6,7 +6,7 @@ This is my take on a (relatively) large 3D printer I'm calling the Makinator. I 
 Design Considerations:
 ----------------------
 - Super large print area. As much as I wanted a 4 foot area like the [BigBot](http://www.thingiverse.com/thing:24037), because of space considerations I finally decided on a conservative 600mm x 600mm x 600mm (~24in).
-- Maximum size to print area ratio. I designed the X/Y gantry to ride over top of the frame so the print head could come as close to the outer edge as possible and increase the usable amount of area.
+- Maximum size-to-print-area ratio. I designed the X/Y gantry to ride over top of the frame so the print head could come as close to the outer edge as possible and increase the usable amount of area.
 - No printed parts. This is my first 3D printer so I didn't have easy access to custom plastic parts. I had to figure out how to make everything by hand or find them off the shelf.
 - Robustness. I will also be using it as a cnc machine to mill wood and metal so it needed to be very strong.
 
